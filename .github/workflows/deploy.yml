@@ -1,0 +1,34 @@
+name: Deploy Mule to GCP
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Build Mule App
+        run: mvn clean package -DskipTests
+
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.GCP_SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan 104.197.16.29 >> ~/.ssh/known_hosts
+
+      - name: Deploy to GCP Mule
+        run: |
+          scp target/*.jar svpnvr@104.197.16.29:/opt/mule/apps/
