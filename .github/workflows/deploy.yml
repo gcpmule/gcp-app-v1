@@ -31,4 +31,4 @@ jobs:
 
       - name: Deploy to GCP Mule
         run: |
-          scp target/*.jar svpnvr@104.197.16.29:/opt/mule/apps/
+          scp target/*.jar svpnvr@35.223.44.186:/opt/mule/apps/
